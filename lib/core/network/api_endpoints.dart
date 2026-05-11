@@ -1,7 +1,12 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
-  static const String baseUrl = 'https://api.brickbook.app/api';
+  // DEVELOPMENT: Use local mock server
+  // Run: dart run mock_server.dart (port 8080)
+  static const String baseUrl = 'http://localhost:8080/api';
+
+  // PRODUCTION: Uncomment when deployed
+  // static const String baseUrl = 'https://api.brickbook.app/api';
 
   // Auth
   static const String register = '/register';
@@ -17,7 +22,14 @@ class ApiEndpoints {
   static String projectSummary(String id) => '/projects/$id/summary';
   static String expenses(String pid) => '/projects/$pid/expenses';
   static String expenseById(String pid, String eid) => '/projects/$pid/expenses/$eid';
+  static String expenseAttachments(String pid, String eid) => '/projects/$pid/expenses/$eid/attachments';
   static String analytics(String pid) => '/projects/$pid/analytics';
+  static String dashboardSummary = '/dashboard/summary';
+  static String projectPhases(String projectId) => '/projects/$projectId/phases';
+  static String projectMembers(String projectId) => '/projects/$projectId/members';
+
+  // Expense Categories
+  static const String expenseCategories = '/expenses/categories';
 
   // Vendors
   static const String vendors = '/vendors';

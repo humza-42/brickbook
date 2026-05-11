@@ -76,4 +76,10 @@ class AppColors {
     end: Alignment.bottomRight,
     colors: [Color(0xFFE8A020), Color(0xFFC0810A)],
   );
+
+  static const LinearGradient cardGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF1B3A5C), Color(0xFF0F2236)],
+  );
 }

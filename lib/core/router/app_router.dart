@@ -18,8 +18,21 @@ import '../../features/auth/screens/role_selection_screen.dart';
 // Import auth providers
 import '../../features/auth/providers/auth_provider.dart';
 
-// Import other screens (placeholders until Step 3)
-// (These are defined inline below)
+// Import Step 3 screens (Dashboard + Projects)
+import '../../features/dashboard/screens/dashboard_screen.dart';
+import '../../features/projects/screens/projects_list_screen.dart';
+import '../../features/projects/screens/create_project_screen.dart';
+import '../../features/projects/screens/project_detail_screen.dart';
+
+// Import placeholder screens for future steps (Step 4+)
+import '../../features/vendors/screens/vendors_list_screen.dart';
+import '../../features/settings/screens/settings_screen.dart';
+import '../../features/expenses/screens/expense_list_screen.dart';
+import '../../features/expenses/screens/add_expense_screen.dart';
+import '../../features/expenses/screens/expense_detail_screen.dart';
+import '../../features/analytics/screens/analytics_screen.dart';
+import '../../features/share/screens/share_project_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -89,73 +102,6 @@ class _NavItem extends StatelessWidget {
       ),
     );
   }
-}
-
-// Placeholder screens for Step 3 (keep as simple placeholders)
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
-  @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Dashboard - Step 3 Coming Soon')));
-}
-
-class ProjectsListScreen extends StatelessWidget {
-  const ProjectsListScreen({super.key});
-  @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Projects List - Step 3 Coming Soon')));
-}
-
-class VendorsListScreen extends StatelessWidget {
-  const VendorsListScreen({super.key});
-  @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Vendors List - Step 3 Coming Soon')));
-}
-
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-  @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Settings - Step 3 Coming Soon')));
-}
-
-class CreateProjectScreen extends StatelessWidget {
-  const CreateProjectScreen({super.key});
-  @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Create Project - Step 3 Coming Soon')));
-}
-
-class ProjectDetailScreen extends StatelessWidget {
-  final String id;
-  const ProjectDetailScreen({super.key, required this.id});
-  @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text('Project Detail: $id - Step 3 Coming Soon')));
-}
-
-class ExpenseListScreen extends StatelessWidget {
-  final String projectId;
-  const ExpenseListScreen({super.key, required this.projectId});
-  @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text('Expenses for Project: $projectId - Step 3 Coming Soon')));
-}
-
-class AddExpenseScreen extends StatelessWidget {
-  final String projectId;
-  const AddExpenseScreen({super.key, required this.projectId});
-  @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text('Add Expense to Project: $projectId - Step 3 Coming Soon')));
-}
-
-class ExpenseDetailScreen extends StatelessWidget {
-  final String projectId, expenseId;
-  const ExpenseDetailScreen({super.key, required this.projectId, required this.expenseId});
-  @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text('Expense Detail: $expenseId in Project $projectId - Step 3 Coming Soon')));
-}
-
-class AnalyticsScreen extends StatelessWidget {
-  final String projectId;
-  const AnalyticsScreen({super.key, required this.projectId});
-  @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text('Analytics for Project: $projectId - Step 3 Coming Soon')));
-}
-
-class ShareProjectScreen extends StatelessWidget {
-  final String projectId;
-  const ShareProjectScreen({super.key, required this.projectId});
-  @override Widget build(BuildContext context) => Scaffold(body: Center(child: Text('Share Project: $projectId - Step 3 Coming Soon')));
-}
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-  @override Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Profile - Step 3 Coming Soon')));
 }
 
 // App Router

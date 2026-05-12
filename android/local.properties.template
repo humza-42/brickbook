@@ -1,0 +1,6 @@
+sdk.dir=/Users/yourname/Library/Android/sdk
+flutter.sdk=/Users/yourname/flutter
+keystorePath=../brickbook-keystore.jks
+keystorePassword=YOUR_KEYSTORE_PASSWORD
+keyAlias=brickbook
+keyPassword=YOUR_KEY_PASSWORD

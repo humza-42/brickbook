@@ -35,6 +35,10 @@ class ApiEndpoints {
   // Vendors
   static const String vendors = '/vendors';
   static String vendorById(String id) => '/vendors/$id';
+  static String vendorSummary(String id) => '/vendors/$id/summary';
+
+  // Photos
+  static const String photos = '/photos';
 
   // Sharing
   static String exportPdf(String pid) => '/projects/$pid/export/pdf';

@@ -16,6 +16,9 @@ class ApiEndpoints {
   static const String otpVerify = '/otp/verify';
   static const String user = '/user';
 
+  // App Config
+  static const String config = '/config';
+
   // Projects
   static const String projects = '/projects';
   static String projectById(String id) => '/projects/$id';

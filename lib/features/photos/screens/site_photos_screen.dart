@@ -10,7 +10,8 @@ import '../providers/photo_providers.dart';
 import '../data/models/photo_models.dart';
 
 class SitePhotosScreen extends ConsumerStatefulWidget {
-  const SitePhotosScreen({super.key});
+  final String projectId;
+  const SitePhotosScreen({super.key, required this.projectId});
 
   @override
   ConsumerState<SitePhotosScreen> createState() => _SitePhotosScreenState();
@@ -116,7 +117,7 @@ class _SitePhotosScreenState extends ConsumerState<SitePhotosScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final photosAsync = ref.watch(photosListProvider(projectId: null, category: null));
+    final photosAsync = ref.watch(photosListProvider(projectId: widget.projectId, category: null));
     final viewMode = ref.watch(photoViewModeNotifierProvider);
     final filter = ref.watch(photoFilterProvider);
     final uploadState = ref.watch(photoUploadNotifierProvider);

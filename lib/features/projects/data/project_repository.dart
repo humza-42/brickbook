@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_endpoints.dart';
+import '../../../core/network/api_error.dart';
+import '../../../core/network/api_response.dart';
 import 'models/project_models.dart';
 
 part 'project_repository.g.dart';
@@ -16,158 +17,171 @@ class ProjectRepository {
   ProjectRepository({required Dio dio}) : _dio = dio;
 
   Future<List<ProjectModel>> getProjects() async {
-    try {
-      final r = await _dio.get(ApiEndpoints.projects);
-      return (r.data['data'] as List)
-          .map((e) => ProjectModel.fromJson(e))
-          .toList();
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, using mock projects: $e');
-      return _getMockProjects();
-    }
+    return safeApiCall(() async {
+      try {
+        final r = await _dio.get(ApiEndpoints.projects);
+        return parseList(r.data['data'] as List, ProjectModel.fromJson);
+      } catch (_) {
+        return _getMockProjects();
+      }
+    });
   }
 
   Future<ProjectModel> getProject(String id) async {
-    try {
-      final r = await _dio.get(ApiEndpoints.projectById(id));
-      return ProjectModel.fromJson(r.data['data']);
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, using mock project: $e');
-      return _getMockProjects().firstWhere((p) => p.id == id);
-    }
+    return safeApiCall(() async {
+      try {
+        final r = await _dio.get(ApiEndpoints.projectById(id));
+        return parseData(r.data['data'] as Map<String, dynamic>, ProjectModel.fromJson);
+      } catch (_) {
+        return _getMockProjects().firstWhere((p) => p.id == id);
+      }
+    });
   }
 
   Future<ProjectModel> createProject(Map<String, dynamic> data) async {
-    try {
-      final r = await _dio.post(ApiEndpoints.projects, data: data);
-      return ProjectModel.fromJson(r.data['data']);
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, mock creating project: $e');
-      // Return a mock created project
-      return ProjectModel(
-        id: 'proj_mock_${DateTime.now().millisecondsSinceEpoch}',
-        name: data['name'] ?? 'New Project',
-        type: data['type'] ?? 'other',
-        totalBudget: (data['total_budget'] ?? 0.0).toDouble(),
-        location: data['location'],
-        status: 'active',
-      );
-    }
+    return safeApiCall(() async {
+      try {
+        final r = await _dio.post(ApiEndpoints.projects, data: data);
+        return parseData(r.data['data'] as Map<String, dynamic>, ProjectModel.fromJson);
+      } catch (_) {
+        return ProjectModel(
+          id: 'proj_mock_${DateTime.now().millisecondsSinceEpoch}',
+          name: data['name'] ?? 'New Project',
+          type: data['type'] ?? 'other',
+          totalBudget: (data['total_budget'] ?? 0.0).toDouble(),
+          location: data['location'],
+          status: 'active',
+        );
+      }
+    });
   }
 
   Future<ProjectModel> updateProject(String id, Map<String, dynamic> data) async {
-    try {
-      final r = await _dio.put(ApiEndpoints.projectById(id), data: data);
-      return ProjectModel.fromJson(r.data['data']);
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, mock updating project: $e');
-      return getProject(id);
-    }
+    return safeApiCall(() async {
+      try {
+        final r = await _dio.put(ApiEndpoints.projectById(id), data: data);
+        return parseData(r.data['data'] as Map<String, dynamic>, ProjectModel.fromJson);
+      } catch (_) {
+        return getProject(id);
+      }
+    });
   }
 
   Future<void> deleteProject(String id) async {
-    try {
-      await _dio.delete(ApiEndpoints.projectById(id));
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, mock delete: $e');
-    }
+    return safeApiCall(() async {
+      try {
+        await _dio.delete(ApiEndpoints.projectById(id));
+      } catch (_) {
+        // Mock delete silently
+      }
+    });
   }
 
   Future<DashboardSummary> getDashboardSummary() async {
-    try {
-      final r = await _dio.get(ApiEndpoints.dashboardSummary);
-      return DashboardSummary.fromJson(r.data['data']);
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, using mock dashboard: $e');
-      final projects = _getMockProjects();
-      final totalProjects = projects.length;
-      final activeProjects = projects.where((p) => p.status == 'active').length;
-      final totalBudget = projects.fold<double>(0, (sum, p) => sum + p.totalBudget);
-      final totalSpent = projects.fold<double>(0, (sum, p) => sum + p.totalSpent);
-      final recentProjects = projects
-          .where((p) => p.status == 'active' || p.status == 'on_hold')
-          .toList()
-        ..sort((a, b) => b.createdAt?.compareTo(a.createdAt ?? '') ?? 0);
+    return safeApiCall(() async {
+      try {
+        final r = await _dio.get(ApiEndpoints.dashboardSummary);
+        return DashboardSummary.fromJson(r.data['data']);
+      } catch (_) {
+        final projects = _getMockProjects();
+        final totalProjects = projects.length;
+        final activeProjects = projects.where((p) => p.status == 'active').length;
+        final totalBudget = projects.fold<double>(0, (sum, p) => sum + p.totalBudget);
+        final totalSpent = projects.fold<double>(0, (sum, p) => sum + p.totalSpent);
+        final recentProjects = projects
+            .where((p) => p.status == 'active' || p.status == 'on_hold')
+            .toList()
+          ..sort((a, b) => b.createdAt?.compareTo(a.createdAt ?? '') ?? 0);
 
-      return DashboardSummary(
-        totalProjects: totalProjects,
-        activeProjects: activeProjects,
-        totalBudget: totalBudget,
-        totalSpent: totalSpent,
-        recentProjects: recentProjects.take(3).toList(),
-        monthlySpend: [
-          {'month': 'Jan', 'amount': 1200000.0},
-          {'month': 'Feb', 'amount': 4800000.0},
-          {'month': 'Mar', 'amount': 5200000.0},
-          {'month': 'Apr', 'amount': 6500000.0},
-          {'month': 'May', 'amount': 7100000.0},
-          {'month': 'Jun', 'amount': 4800000.0},
-          {'month': 'Jul', 'amount': 2000000.0},
-        ],
-      );
-    }
+        return DashboardSummary(
+          totalProjects: totalProjects,
+          activeProjects: activeProjects,
+          totalBudget: totalBudget,
+          totalSpent: totalSpent,
+          recentProjects: recentProjects.take(3).toList(),
+          monthlySpend: [
+            {'month': 'Jan', 'amount': 1200000.0},
+            {'month': 'Feb', 'amount': 4800000.0},
+            {'month': 'Mar', 'amount': 5200000.0},
+            {'month': 'Apr', 'amount': 6500000.0},
+            {'month': 'May', 'amount': 7100000.0},
+            {'month': 'Jun', 'amount': 4800000.0},
+            {'month': 'Jul', 'amount': 2000000.0},
+          ],
+        );
+      }
+    });
   }
 
   Future<List<ProjectPhase>> getPhases(String projectId) async {
-    try {
-      final r = await _dio.get(ApiEndpoints.projectPhases(projectId));
-      return (r.data['data'] as List).map((e) => ProjectPhase.fromJson(e)).toList();
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, using mock phases: $e');
-      return _getMockProjects().where((p) => p.id == projectId).first.phases;
-    }
+    return safeApiCall(() async {
+      try {
+        final r = await _dio.get(ApiEndpoints.projectPhases(projectId));
+        return parseList(r.data['data'] as List, ProjectPhase.fromJson);
+      } catch (_) {
+        return _getMockProjects().where((p) => p.id == projectId).first.phases;
+      }
+    });
   }
 
   Future<ProjectPhase> createPhase(String projectId, Map<String, dynamic> data) async {
-    try {
-      final r = await _dio.post(ApiEndpoints.projectPhases(projectId), data: data);
-      return ProjectPhase.fromJson(r.data['data']);
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, mock creating phase: $e');
-      return ProjectPhase(
-        id: 'phase_mock_${DateTime.now().millisecondsSinceEpoch}',
-        projectId: projectId,
-        name: data['name'] ?? 'New Phase',
-        budgetAllocated: (data['budgetAllocated'] ?? 0.0).toDouble(),
-      );
-    }
+    return safeApiCall(() async {
+      try {
+        final r = await _dio.post(ApiEndpoints.projectPhases(projectId), data: data);
+        return parseData(r.data['data'] as Map<String, dynamic>, ProjectPhase.fromJson);
+      } catch (_) {
+        return ProjectPhase(
+          id: 'phase_mock_${DateTime.now().millisecondsSinceEpoch}',
+          projectId: projectId,
+          name: data['name'] ?? 'New Phase',
+          budgetAllocated: (data['budgetAllocated'] ?? 0.0).toDouble(),
+        );
+      }
+    });
   }
 
   Future<void> deletePhase(String projectId, String phaseId) async {
-    try {
-      await _dio.delete('${ApiEndpoints.projectPhases(projectId)}/$phaseId');
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, mock delete phase: $e');
-    }
+    return safeApiCall(() async {
+      try {
+        await _dio.delete('${ApiEndpoints.projectPhases(projectId)}/$phaseId');
+      } catch (_) {
+        // Mock delete
+      }
+    });
   }
 
   Future<List<ProjectMember>> getMembers(String projectId) async {
-    try {
-      final r = await _dio.get(ApiEndpoints.projectMembers(projectId));
-      return (r.data['data'] as List).map((e) => ProjectMember.fromJson(e)).toList();
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, returning empty members: $e');
-      return [];
-    }
+    return safeApiCall(() async {
+      try {
+        final r = await _dio.get(ApiEndpoints.projectMembers(projectId));
+        return parseList(r.data['data'] as List, ProjectMember.fromJson);
+      } catch (_) {
+        return [];
+      }
+    });
   }
 
   Future<void> inviteMember(String projectId, String emailOrPhone, String permission) async {
-    try {
-      await _dio.post(ApiEndpoints.projectMembers(projectId), data: {
-        'contact': emailOrPhone,
-        'permission': permission,
-      });
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, mock invite: $e');
-    }
+    return safeApiCall(() async {
+      try {
+        await _dio.post(ApiEndpoints.projectMembers(projectId), data: {
+          'contact': emailOrPhone,
+          'permission': permission,
+        });
+      } catch (_) {
+        // Mock invite
+      }
+    });
   }
 
   Future<void> removeMember(String projectId, String memberId) async {
-    try {
-      await _dio.delete('${ApiEndpoints.projectMembers(projectId)}/$memberId');
-    } catch (e) {
-      if (kDebugMode) print('⚠️ API failed, mock remove: $e');
-    }
+    return safeApiCall(() async {
+      try {
+        await _dio.delete('${ApiEndpoints.projectMembers(projectId)}/$memberId');
+      } catch (_) {
+        // Mock remove
+      }
+    });
   }
 
   // ============ MOCK DATA ============
@@ -268,4 +282,3 @@ class ProjectRepository {
     ];
   }
 }
-

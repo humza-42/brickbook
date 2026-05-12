@@ -40,4 +40,5 @@ class ApiEndpoints {
   static String exportPdf(String pid) => '/projects/$pid/export/pdf';
   static String exportExcel(String pid) => '/projects/$pid/export/excel';
   static String guestLinks(String pid) => '/projects/$pid/guest-links';
+  static String shareEmail(String pid) => '/projects/$pid/share/email';
 }

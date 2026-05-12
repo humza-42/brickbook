@@ -23,6 +23,7 @@ class Routes {
   static const String expenseDetail = '/projects/:id/expenses/:expId';
   static const String analytics = '/projects/:id/analytics';
   static const String shareProject = '/projects/:id/share';
+  static const String guestLinks = '/projects/:id/guest-links';
   static const String sitePhotos = '/projects/:id/photos';
 
   // Vendors

@@ -24,6 +24,7 @@ class ApiEndpoints {
   static String expenseById(String pid, String eid) => '/projects/$pid/expenses/$eid';
   static String expenseAttachments(String pid, String eid) => '/projects/$pid/expenses/$eid/attachments';
   static String analytics(String pid) => '/projects/$pid/analytics';
+  static String analyticsVendors(String pid) => '/projects/$pid/analytics/vendors';
   static String dashboardSummary = '/dashboard/summary';
   static String projectPhases(String projectId) => '/projects/$projectId/phases';
   static String projectMembers(String projectId) => '/projects/$projectId/members';

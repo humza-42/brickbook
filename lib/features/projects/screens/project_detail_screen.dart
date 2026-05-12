@@ -41,7 +41,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         body: NestedScrollView(
           headerSliverBuilder: (_, __) => [
             SliverAppBar(
-              expandedHeight: 220,
+              expandedHeight: 320,
               pinned: true,
               backgroundColor: AppColors.primaryDark,
               foregroundColor: Colors.white,
@@ -167,28 +167,28 @@ class _ProjectHeroBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(project.name,
-                    style: const TextStyle(fontFamily: 'Sora', fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white),
-                    maxLines: 2),
-                const SizedBox(height: 4),
+                 Text(project.name,
+                     style: const TextStyle(fontFamily: 'Sora', fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
+                     maxLines: 2),
+                 const SizedBox(height: 2),
                 if (project.location != null)
                   Row(children: [
                     Icon(Icons.location_on_outlined, color: Colors.white.withOpacity(0.6), size: 14),
                     Text(' ${project.location}',
                         style: TextStyle(fontFamily: 'Sora', fontSize: 12, color: Colors.white.withOpacity(0.6))),
-                  ]),
-                const SizedBox(height: 12),
+                   ]),
+                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Expanded(child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(Formatters.pkrCompact(project.totalSpent),
-                            style: const TextStyle(fontFamily: 'Sora', fontSize: 18, fontWeight: FontWeight.w700, color: Colors.white)),
-                        Text('of ${Formatters.pkrCompact(project.totalBudget)} budget',
-                            style: TextStyle(fontFamily: 'Sora', fontSize: 11, color: Colors.white.withOpacity(0.6))),
-                      ],
-                    )),
+                     Expanded(child: Column(
+                       crossAxisAlignment: CrossAxisAlignment.start,
+                       children: [
+                         Text(Formatters.pkrCompact(project.totalSpent),
+                             style: const TextStyle(fontFamily: 'Sora', fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                         Text('of ${Formatters.pkrCompact(project.totalBudget)} budget',
+                             style: TextStyle(fontFamily: 'Sora', fontSize: 10, color: Colors.white.withOpacity(0.6))),
+                       ],
+                     )),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
@@ -201,12 +201,12 @@ class _ProjectHeroBanner extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(
-                    value: pct,
-                    minHeight: 6,
+                 const SizedBox(height: 4),
+                 ClipRRect(
+                   borderRadius: BorderRadius.circular(4),
+                   child: LinearProgressIndicator(
+                     value: pct,
+                     minHeight: 4,
                     backgroundColor: Colors.white.withOpacity(0.15),
                     valueColor: AlwaysStoppedAnimation<Color>(barColor),
                   ),
@@ -263,11 +263,16 @@ class _BigBudgetCard extends StatelessWidget {
       border: Border.all(color: AppColors.border),
     ),
     child: Column(children: [
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        _BudgetKpi(label: 'Total Budget', value: Formatters.pkr(project.totalBudget), color: AppColors.primary),
-        _BudgetKpi(label: 'Spent',        value: Formatters.pkr(project.totalSpent),  color: AppColors.accent),
-        _BudgetKpi(label: 'Remaining',    value: Formatters.pkr(project.remaining),
-            color: project.isOverBudget ? AppColors.error : AppColors.success),
+      Row(children: [
+        Expanded(child: _BudgetKpi(label: 'Total Budget', value: Formatters.pkr(project.totalBudget), color: AppColors.primary)),
+        const SizedBox(width: AppDim.sm),
+        Expanded(child: _BudgetKpi(label: 'Spent', value: Formatters.pkr(project.totalSpent), color: AppColors.accent)),
+        const SizedBox(width: AppDim.sm),
+        Expanded(child: _BudgetKpi(
+          label: 'Remaining',
+          value: Formatters.pkr(project.remaining),
+          color: project.isOverBudget ? AppColors.error : AppColors.success,
+        )),
       ]),
       const SizedBox(height: AppDim.base),
       ClipRRect(
@@ -291,8 +296,8 @@ class _BudgetKpi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(children: [
-    Text(value, style: AppText.moneySm.copyWith(color: color, fontSize: 14)),
-    Text(label, style: AppText.caption),
+    Text(value, style: AppText.moneySm.copyWith(color: color, fontSize: 14), overflow: TextOverflow.ellipsis, maxLines: 1),
+    Text(label, style: AppText.caption, overflow: TextOverflow.ellipsis, maxLines: 1),
   ]);
 }
 
@@ -313,10 +318,30 @@ class _PhaseBudgetRow extends StatelessWidget {
         border: Border.all(color: AppColors.border),
       ),
       child: Column(children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(phase.name, style: AppText.labelLg),
-          Text(Formatters.pkrCompact(phase.spent), style: AppText.moneySm.copyWith(fontSize: 13)),
-        ]),
+      Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              phase.name,
+              style: AppText.labelLg,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+          const SizedBox(width: AppDim.sm),
+          Flexible(
+            flex: 1,
+            child: Text(
+              Formatters.pkrCompact(phase.spent),
+              style: AppText.moneySm.copyWith(fontSize: 13),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              textAlign: TextAlign.right,
+            ),
+          ),
+        ],
+      ),
         const SizedBox(height: 6),
         ClipRRect(
           borderRadius: BorderRadius.circular(3),

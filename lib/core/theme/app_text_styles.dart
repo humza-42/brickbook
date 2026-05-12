@@ -71,6 +71,12 @@ class AppText {
     color: AppColors.textTertiary, height: 1.5,
   );
 
+  // Overline / Uppercase label
+  static const TextStyle overline = TextStyle(
+    fontFamily: _fontFamily, fontSize: 11, fontWeight: FontWeight.w600,
+    color: AppColors.textTertiary, letterSpacing: 0.8,
+  );
+
   // Money
   static const TextStyle moneyXl = TextStyle(
     fontFamily: _fontFamily, fontSize: 30, fontWeight: FontWeight.w700,

@@ -19,6 +19,7 @@ class SecureStorageService {
   static const _keyUserName = 'user_name';
   static const _keyUserRole = 'user_role';
   static const _keyOnboarded = 'onboarded';
+  static const _keyLanguage = 'language';
 
   Future<void> saveToken(String token) => _storage.write(key: _keyToken, value: token);
   Future<String?> getToken() => _storage.read(key: _keyToken);
@@ -29,13 +30,16 @@ class SecureStorageService {
     await _storage.write(key: _keyUserName, value: name);
     await _storage.write(key: _keyUserRole, value: role);
   }
-  
+   
   Future<String?> getUserId() => _storage.read(key: _keyUserId);
   Future<String?> getUserName() => _storage.read(key: _keyUserName);
   Future<String?> getUserRole() => _storage.read(key: _keyUserRole);
 
   Future<void> setOnboarded() => _storage.write(key: _keyOnboarded, value: 'true');
   Future<bool> isOnboarded() async => await _storage.read(key: _keyOnboarded) == 'true';
+
+  Future<void> setLanguage(String lang) => _storage.write(key: _keyLanguage, value: lang);
+  Future<String?> getLanguage() async => await _storage.read(key: _keyLanguage);
 
   Future<void> clearAll() => _storage.deleteAll();
 }

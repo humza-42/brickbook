@@ -30,6 +30,8 @@ class Routes {
   static const String vendorDetail = '/vendors/:id';
   static const String addVendor = '/vendors/add';
 
-  // Settings
-  static const String profile = '/settings/profile';
-}
+   // Settings
+   static const String profile = '/settings/profile';
+   static const String language = '/settings/language';
+   static const String notifications = '/settings/notifications';
+ }

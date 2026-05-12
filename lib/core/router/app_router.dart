@@ -27,6 +27,8 @@ import '../../features/projects/screens/project_detail_screen.dart';
 // Import placeholder screens for future steps (Step 4+)
 import '../../features/vendors/screens/vendors_list_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
+import '../../features/settings/screens/language_screen.dart';
+import '../../features/settings/screens/notifications_screen.dart';
 import '../../features/expenses/screens/expense_list_screen.dart';
 import '../../features/expenses/screens/add_expense_screen.dart';
 import '../../features/expenses/screens/expense_detail_screen.dart';
@@ -142,6 +144,10 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(path: Routes.projects, builder: (_, __) => const ProjectsListScreen()),
           GoRoute(path: Routes.vendors, builder: (_, __) => const VendorsListScreen()),
           GoRoute(path: Routes.settings, builder: (_, __) => const SettingsScreen()),
+          // Settings sub-routes
+          GoRoute(path: Routes.profile, builder: (_, __) => const ProfileScreen()),
+          GoRoute(path: Routes.language, builder: (_, __) => const LanguageScreen()),
+          GoRoute(path: Routes.notifications, builder: (_, __) => const NotificationsScreen()),
         ],
       ),
 
@@ -153,8 +159,7 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(path: Routes.expenseDetail, builder: (_, s) => ExpenseDetailScreen(projectId: s.pathParameters['id']!, expenseId: s.pathParameters['expId']!)),
       GoRoute(path: Routes.analytics, builder: (_, s) => AnalyticsScreen(projectId: s.pathParameters['id']!)),
       GoRoute(path: Routes.shareProject, builder: (_, s) => ShareProjectScreen(projectId: s.pathParameters['id']!)),
-      GoRoute(path: Routes.profile, builder: (_, __) => const ProfileScreen()),
-    ],
+     ],
     errorBuilder: (context, state) => Scaffold(body: Center(child: Text('Page not found: ${state.error}'))),
   );
 }
